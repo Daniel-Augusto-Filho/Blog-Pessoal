@@ -19,16 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 @RequestMapping("/usuarios")
 @CrossOrigin("*")
 public class UsuarioController {
-	
+
 	@Autowired
 	private UsuarioRepository repository;
-	
+
 	@Autowired
 	private UsuarioService usuarioService;
 
@@ -48,11 +46,17 @@ public class UsuarioController {
 		return repository.findById(id).map(resp -> ResponseEntity.ok(resp)).orElse(ResponseEntity.notFound().build());
 	}
 
-
 	@PostMapping("/cadastrar")
-	public ResponseEntity<Usuario> Post(@RequestBody Usuario usuario) {
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(usuarioService.CadastrarUsuario(usuario));
+	public ResponseEntity<Usuario> Post(@RequestBody Usuario usuario) 
+	{
+		Optional<Usuario> user = usuarioService.CadastrarUsuario(usuario);
+		try {
+				return ResponseEntity.ok(user.get());
+		} catch (Exception e) 
+		{
+			return ResponseEntity.badRequest().build();
+		}
+		
 	}
 
 	@PutMapping
